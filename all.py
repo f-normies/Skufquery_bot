@@ -29,7 +29,8 @@ async def tag_all(update: Update, context: ContextTypes.DEFAULT_TYPE, API_ID, AP
         
         for user in users:
             if user.id != bot_user.id:  # Исключаем бота
-                mention = f'<a href="tg://user?id={user.id}">{user.first_name}</a>'
+                escaped_name = user.first_name.replace('[', '\\[').replace(']', '\\]').replace('(', '\\(').replace(')', '\\)').replace('_', '\\_').replace('*', '\\*')
+                mention = f"[{escaped_name}](tg://user?id={user.id})"
                 mentions.append(mention)
         
         if mentions:
@@ -39,7 +40,7 @@ async def tag_all(update: Update, context: ContextTypes.DEFAULT_TYPE, API_ID, AP
                 chat_id=update.effective_chat.id,
                 reply_to_message_id=update.message.message_id,
                 text=message_text,
-                parse_mode='HTML'
+                parse_mode='MarkdownV2'
             )
         else:
             await context.bot.send_message(
